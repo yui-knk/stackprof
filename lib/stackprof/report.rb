@@ -9,7 +9,7 @@ module StackProf
     attr_reader :data
 
     def frames(sort_by_total=false)
-      Hash[ *@data[:frames].sort_by{ |iseq, stats| -stats[sort_by_total ? :total_samples : :samples] }.flatten(1) ]
+      @data[:frames].sort_by{ |iseq, stats| -stats[sort_by_total ? :total_samples : :samples] }.inject({}){|h, (k, v)| h[k] = v; h}
     end
 
     def normalized_frames
@@ -256,7 +256,7 @@ module StackProf
     end
 
     def print_method(name, f = STDOUT)
-      name = /#{Regexp.escape name}/ unless Regexp === name
+      name = /#{name}/ unless Regexp === name
       frames.each do |frame, info|
         next unless info[:name] =~ name
         file, line = info.values_at(:file, :line)

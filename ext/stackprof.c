@@ -529,7 +529,7 @@ Init_stackprof(void)
     S(aggregate);
 #undef S
 
-    gc_hook = Data_Wrap_Struct(rb_cObject, stackprof_gc_mark, NULL, NULL);
+    gc_hook = Data_Wrap_Struct(rb_cObject, stackprof_gc_mark, NULL, &_stackprof);
     rb_global_variable(&gc_hook);
 
     rb_mStackProf = rb_define_module("StackProf");
@@ -539,9 +539,6 @@ Init_stackprof(void)
     rb_define_singleton_method(rb_mStackProf, "stop", stackprof_stop, 0);
     rb_define_singleton_method(rb_mStackProf, "results", stackprof_results, -1);
     rb_define_singleton_method(rb_mStackProf, "sample", stackprof_sample, 0);
-
-    rb_autoload(rb_mStackProf, rb_intern_const("Report"), "stackprof/report.rb");
-    rb_autoload(rb_mStackProf, rb_intern_const("Middleware"), "stackprof/middleware.rb");
 
     pthread_atfork(stackprof_atfork_prepare, stackprof_atfork_parent, stackprof_atfork_child);
 }
